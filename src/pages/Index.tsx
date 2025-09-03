@@ -1,13 +1,74 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React from 'react';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { Navigation } from '@/components/Navigation';
+import { HeroSection } from '@/components/sections/HeroSection';
+import { SkillsSection } from '@/components/sections/SkillsSection';
+import { ContactsSection } from '@/components/sections/ContactsSection';
+import { OngoingWorksSection } from '@/components/sections/OngoingWorksSection';
+import { CoursesSection } from '@/components/sections/CoursesSection';
+import { CertificationsSection } from '@/components/sections/CertificationsSection';
+import { usePortfolioData } from '@/hooks/usePortfolioData';
 
 const Index = () => {
+  const { data, updateField } = usePortfolioData();
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <ThemeProvider>
+      <div className="min-h-screen bg-background custom-scrollbar">
+        <ThemeToggle />
+        <Navigation />
+
+        {/* Hero Section */}
+        <HeroSection
+          name={data.name}
+          bio={data.bio}
+          profileImage={data.profileImage}
+          onNameChange={(name) => updateField('name', name)}
+          onBioChange={(bio) => updateField('bio', bio)}
+          onImageChange={(profileImage) => updateField('profileImage', profileImage)}
+        />
+
+        {/* Skills Section */}
+        <SkillsSection
+          skills={data.skills}
+          onSkillsChange={(skills) => updateField('skills', skills)}
+        />
+
+        {/* Ongoing Works Section */}
+        <OngoingWorksSection
+          works={data.ongoingWorks}
+          onWorksChange={(ongoingWorks) => updateField('ongoingWorks', ongoingWorks)}
+        />
+
+        {/* Courses Section */}
+        <CoursesSection
+          courses={data.courses}
+          onCoursesChange={(courses) => updateField('courses', courses)}
+        />
+
+        {/* Certifications Section */}
+        <CertificationsSection
+          certifications={data.certifications}
+          onCertificationsChange={(certifications) => updateField('certifications', certifications)}
+        />
+
+        {/* Contacts Section */}
+        <ContactsSection
+          contacts={data.contacts}
+          onContactsChange={(contacts) => updateField('contacts', contacts)}
+        />
+
+        {/* Footer */}
+        <footer className="py-12 bg-gradient-hero/20 border-t border-border">
+          <div className="container mx-auto px-6 text-center">
+            <p className="text-muted-foreground">
+              © 2024 {data.name}. Built with ❤️ using React & TypeScript
+            </p>
+          </div>
+        </footer>
       </div>
-    </div>
+    </ThemeProvider>
   );
 };
 
