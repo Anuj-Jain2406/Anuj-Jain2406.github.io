@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Plus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 interface Skill {
   name: string;
@@ -23,6 +24,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
   onSkillsChange,
   className
 }) => {
+  const { isEditMode } = useEditMode();
   const technicalSkills = skills.filter(skill => skill.category === 'technical');
   const softSkills = skills.filter(skill => skill.category === 'soft');
 
@@ -54,19 +56,25 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
   }) => (
     <div className="group relative p-4 rounded-lg glass-card hover-lift">
       <div className="flex items-center justify-between mb-3">
-        <input
-          value={skill.name}
-          onChange={(e) => onUpdate({ name: e.target.value })}
-          className="font-medium bg-transparent border-none outline-none focus:text-primary smooth-transition"
-        />
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onRemove}
-          className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-destructive"
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        {isEditMode ? (
+          <input
+            value={skill.name}
+            onChange={(e) => onUpdate({ name: e.target.value })}
+            className="font-medium bg-transparent border-none outline-none focus:text-primary smooth-transition"
+          />
+        ) : (
+          <span className="font-medium">{skill.name}</span>
+        )}
+        {isEditMode && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onRemove}
+            className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-destructive"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -77,14 +85,16 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
           </Badge>
         </div>
         <Progress value={skill.level} className="h-2" />
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={skill.level}
-          onChange={(e) => onUpdate({ level: parseInt(e.target.value) })}
-          className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-muted"
-        />
+        {isEditMode && (
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={skill.level}
+            onChange={(e) => onUpdate({ level: parseInt(e.target.value) })}
+            className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-muted"
+          />
+        )}
       </div>
     </div>
   );
@@ -103,14 +113,16 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="text-2xl gradient-text">Technical Skills</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => addSkill('technical')}
-                  className="text-primary hover:text-primary"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                {isEditMode && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => addSkill('technical')}
+                    className="text-primary hover:text-primary"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -136,14 +148,16 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="text-2xl gradient-text">Soft Skills</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => addSkill('soft')}
-                  className="text-primary hover:text-primary"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                {isEditMode && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => addSkill('soft')}
+                    className="text-primary hover:text-primary"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent>

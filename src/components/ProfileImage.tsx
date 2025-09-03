@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Camera, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 interface ProfileImageProps {
   src?: string;
@@ -25,6 +26,7 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
   className,
   size = 'lg'
 }) => {
+  const { isEditMode } = useEditMode();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,18 +63,20 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
           </div>
         )}
         
-        {/* Upload overlay */}
-        <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 smooth-transition">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleUploadClick}
-            className="text-white hover:text-white hover:bg-white/20"
-          >
-            <Upload className="w-5 h-5 mr-2" />
-            Change
-          </Button>
-        </div>
+        {/* Upload overlay - only show in edit mode */}
+        {isEditMode && (
+          <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 smooth-transition">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleUploadClick}
+              className="text-white hover:text-white hover:bg-white/20"
+            >
+              <Upload className="w-5 h-5 mr-2" />
+              Change
+            </Button>
+          </div>
+        )}
       </div>
 
       <input

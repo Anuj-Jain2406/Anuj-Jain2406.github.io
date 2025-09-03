@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Edit3, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 interface EditableTextProps {
   value: string;
@@ -20,6 +21,7 @@ export const EditableText: React.FC<EditableTextProps> = ({
   multiline = false,
   as: Component = 'p'
 }) => {
+  const { isEditMode } = useEditMode();
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState(value);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
@@ -89,6 +91,14 @@ export const EditableText: React.FC<EditableTextProps> = ({
           </Button>
         </div>
       </div>
+    );
+  }
+
+  if (!isEditMode) {
+    return (
+      <Component className={className}>
+        {value || <span className="text-muted-foreground">{placeholder}</span>}
+      </Component>
     );
   }
 

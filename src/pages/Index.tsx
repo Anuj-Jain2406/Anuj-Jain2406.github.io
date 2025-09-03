@@ -1,6 +1,8 @@
 import React from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { EditModeProvider } from '@/contexts/EditModeContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { EditModeToggle } from '@/components/EditModeToggle';
 import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { SkillsSection } from '@/components/sections/SkillsSection';
@@ -15,9 +17,11 @@ const Index = () => {
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-background custom-scrollbar">
-        <ThemeToggle />
-        <Navigation />
+      <EditModeProvider>
+        <div className="min-h-screen bg-background custom-scrollbar">
+          <ThemeToggle />
+          <EditModeToggle />
+          <Navigation />
 
         {/* Hero Section */}
         <HeroSection
@@ -67,7 +71,8 @@ const Index = () => {
             </p>
           </div>
         </footer>
-      </div>
+        </div>
+      </EditModeProvider>
     </ThemeProvider>
   );
 };
