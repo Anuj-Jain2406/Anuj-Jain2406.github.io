@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, X, GraduationCap, Calendar, MapPin } from 'lucide-react';
-import { EditableText } from '../EditableText';
+import { Plus, X, Edit, GraduationCap, Calendar, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useEditMode } from '@/contexts/EditModeContext';
+import { CourseModal } from '@/components/modals/CourseModal';
 
 interface Course {
   id: string;
@@ -31,25 +32,33 @@ export const CoursesSection: React.FC<CoursesSectionProps> = ({
   onCoursesChange,
   className
 }) => {
-  const addCourse = () => {
-    const newCourse: Course = {
-      id: Date.now().toString(),
-      title: 'New Course',
-      institution: 'Institution Name',
-      period: '2024 - Present',
-      status: 'in-progress'
-    };
-    onCoursesChange([...courses, newCourse]);
+  const { isEditMode } = useEditMode();
+  const [showModal, setShowModal] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+
+  const handleAddCourse = () => {
+    setEditingCourse(null);
+    setShowModal(true);
+  };
+
+  const handleEditCourse = (course: Course) => {
+    setEditingCourse(course);
+    setShowModal(true);
+  };
+
+  const handleSaveCourse = (courseData: Course) => {
+    if (editingCourse) {
+      onCoursesChange(courses.map(course => 
+        course.id === editingCourse.id ? courseData : course
+      ));
+    } else {
+      onCoursesChange([...courses, courseData]);
+    }
+    setShowModal(false);
   };
 
   const removeCourse = (id: string) => {
     onCoursesChange(courses.filter(course => course.id !== id));
-  };
-
-  const updateCourse = (id: string, updates: Partial<Course>) => {
-    onCoursesChange(courses.map(course => 
-      course.id === id ? { ...course, ...updates } : course
-    ));
   };
 
   return (
@@ -62,13 +71,15 @@ export const CoursesSection: React.FC<CoursesSectionProps> = ({
               Academic journey and continuous learning path
             </p>
           </div>
-          <Button
-            onClick={addCourse}
-            className="bg-gradient-button hover:scale-105 smooth-transition shadow-soft"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Course
-          </Button>
+          {isEditMode && (
+            <Button
+              onClick={handleAddCourse}
+              className="bg-gradient-button hover:scale-105 smooth-transition shadow-soft"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Course
+            </Button>
+          )}
         </div>
 
         <div className="max-w-4xl mx-auto">
@@ -92,28 +103,15 @@ export const CoursesSection: React.FC<CoursesSectionProps> = ({
                       <CardHeader className="relative">
                         <div className="flex items-start justify-between">
                           <div className="flex-1 space-y-2">
-                            <EditableText
-                              value={course.title}
-                              onChange={(title) => updateCourse(course.id, { title })}
-                              as="h3"
-                              className="text-xl font-semibold"
-                            />
+                            <h3 className="text-xl font-semibold">{course.title}</h3>
                             <div className="flex items-center gap-4 text-sm text-muted-foreground">
                               <div className="flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />
-                                <EditableText
-                                  value={course.institution}
-                                  onChange={(institution) => updateCourse(course.id, { institution })}
-                                  className="text-sm"
-                                />
+                                <span>{course.institution}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-4 w-4" />
-                                <EditableText
-                                  value={course.period}
-                                  onChange={(period) => updateCourse(course.id, { period })}
-                                  className="text-sm"
-                                />
+                                <span>{course.period}</span>
                               </div>
                             </div>
                             <Badge variant="secondary" className={cn(
@@ -123,34 +121,28 @@ export const CoursesSection: React.FC<CoursesSectionProps> = ({
                               {statusInfo.label}
                             </Badge>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeCourse(course.id)}
-                            className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-destructive smooth-transition"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
+                          {isEditMode && (
+                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 smooth-transition">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditCourse(course)}
+                                className="h-8 w-8 p-0 text-primary"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeCourse(course.id)}
+                                className="h-8 w-8 p-0 text-destructive"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </CardHeader>
-                      <CardContent>
-                        <div>
-                          <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                            Status
-                          </label>
-                          <select
-                            value={course.status}
-                            onChange={(e) => updateCourse(course.id, { status: e.target.value as Course['status'] })}
-                            className="w-full p-2 rounded-md bg-background border border-border smooth-transition focus:border-primary focus:ring-1 focus:ring-primary"
-                          >
-                            {Object.entries(statusConfig).map(([key, config]) => (
-                              <option key={key} value={key}>
-                                {config.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </CardContent>
                     </Card>
                   </div>
                 );
@@ -158,6 +150,14 @@ export const CoursesSection: React.FC<CoursesSectionProps> = ({
             </div>
           </div>
         </div>
+
+        <CourseModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSave={handleSaveCourse}
+          course={editingCourse || undefined}
+          title={editingCourse ? 'Edit Course' : 'Add New Course'}
+        />
       </div>
     </section>
   );

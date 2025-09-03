@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Edit } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEditMode } from '@/contexts/EditModeContext';
+import { SkillModal } from '@/components/modals/SkillModal';
 
 interface Skill {
   name: string;
@@ -25,16 +26,31 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
   className
 }) => {
   const { isEditMode } = useEditMode();
+  const [showModal, setShowModal] = useState(false);
+  const [editingSkill, setEditingSkill] = useState<{ skill: Skill; index: number } | null>(null);
+  
   const technicalSkills = skills.filter(skill => skill.category === 'technical');
   const softSkills = skills.filter(skill => skill.category === 'soft');
 
-  const addSkill = (category: 'technical' | 'soft') => {
-    const newSkill: Skill = {
-      name: `New ${category} skill`,
-      level: 50,
-      category
-    };
-    onSkillsChange([...skills, newSkill]);
+  const handleAddSkill = (category: 'technical' | 'soft') => {
+    setEditingSkill(null);
+    setShowModal(true);
+  };
+
+  const handleEditSkill = (skill: Skill, index: number) => {
+    setEditingSkill({ skill, index });
+    setShowModal(true);
+  };
+
+  const handleSaveSkill = (skillData: Skill) => {
+    if (editingSkill) {
+      const updatedSkills = [...skills];
+      updatedSkills[editingSkill.index] = skillData;
+      onSkillsChange(updatedSkills);
+    } else {
+      onSkillsChange([...skills, skillData]);
+    }
+    setShowModal(false);
   };
 
   const removeSkill = (index: number) => {
@@ -42,38 +58,34 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
     onSkillsChange(newSkills);
   };
 
-  const updateSkill = (index: number, updates: Partial<Skill>) => {
-    const newSkills = [...skills];
-    newSkills[index] = { ...newSkills[index], ...updates };
-    onSkillsChange(newSkills);
-  };
-
-  const SkillCard = ({ skill, index, onUpdate, onRemove }: {
+  const SkillCard = ({ skill, index, onEdit, onRemove }: {
     skill: Skill;
     index: number;
-    onUpdate: (updates: Partial<Skill>) => void;
+    onEdit: () => void;
     onRemove: () => void;
   }) => (
     <div className="group relative p-4 rounded-lg glass-card hover-lift">
       <div className="flex items-center justify-between mb-3">
-        {isEditMode ? (
-          <input
-            value={skill.name}
-            onChange={(e) => onUpdate({ name: e.target.value })}
-            className="font-medium bg-transparent border-none outline-none focus:text-primary smooth-transition"
-          />
-        ) : (
-          <span className="font-medium">{skill.name}</span>
-        )}
+        <span className="font-medium">{skill.name}</span>
         {isEditMode && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onRemove}
-            className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-destructive"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          <div className="flex gap-1 opacity-0 group-hover:opacity-100 smooth-transition">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onEdit}
+              className="h-8 w-8 p-0 text-primary"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onRemove}
+              className="h-8 w-8 p-0 text-destructive"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </div>
       
@@ -85,16 +97,6 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
           </Badge>
         </div>
         <Progress value={skill.level} className="h-2" />
-        {isEditMode && (
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={skill.level}
-            onChange={(e) => onUpdate({ level: parseInt(e.target.value) })}
-            className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-muted"
-          />
-        )}
       </div>
     </div>
   );
@@ -117,7 +119,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => addSkill('technical')}
+                    onClick={() => handleAddSkill('technical')}
                     className="text-primary hover:text-primary"
                   >
                     <Plus className="h-4 w-4" />
@@ -134,7 +136,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
                       key={skillIndex}
                       skill={skill}
                       index={skillIndex}
-                      onUpdate={(updates) => updateSkill(skillIndex, updates)}
+                      onEdit={() => handleEditSkill(skill, skillIndex)}
                       onRemove={() => removeSkill(skillIndex)}
                     />
                   );
@@ -152,7 +154,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => addSkill('soft')}
+                    onClick={() => handleAddSkill('soft')}
                     className="text-primary hover:text-primary"
                   >
                     <Plus className="h-4 w-4" />
@@ -169,7 +171,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
                       key={skillIndex}
                       skill={skill}
                       index={skillIndex}
-                      onUpdate={(updates) => updateSkill(skillIndex, updates)}
+                      onEdit={() => handleEditSkill(skill, skillIndex)}
                       onRemove={() => removeSkill(skillIndex)}
                     />
                   );
@@ -178,6 +180,14 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
             </CardContent>
           </Card>
         </div>
+
+        <SkillModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSave={handleSaveSkill}
+          skill={editingSkill?.skill}
+          title={editingSkill ? 'Edit Skill' : 'Add New Skill'}
+        />
       </div>
     </section>
   );

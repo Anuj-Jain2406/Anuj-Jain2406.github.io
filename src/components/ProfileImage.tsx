@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Camera, Upload } from 'lucide-react';
+import { Camera, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEditMode } from '@/contexts/EditModeContext';
+import { PhotoUploadModal } from '@/components/modals/PhotoUploadModal';
 
 interface ProfileImageProps {
   src?: string;
@@ -27,22 +28,11 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
   size = 'lg'
 }) => {
   const { isEditMode } = useEditMode();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        onChange(result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
+  const handleSavePhoto = (imageUrl: string) => {
+    onChange(imageUrl);
+    setShowModal(false);
   };
 
   return (
@@ -69,22 +59,21 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleUploadClick}
+              onClick={() => setShowModal(true)}
               className="text-white hover:text-white hover:bg-white/20"
             >
-              <Upload className="w-5 h-5 mr-2" />
+              <Edit className="w-5 h-5 mr-2" />
               Change
             </Button>
           </div>
         )}
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
+      <PhotoUploadModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onSave={handleSavePhoto}
+        currentImage={src}
       />
     </div>
   );

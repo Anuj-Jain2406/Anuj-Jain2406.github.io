@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, X, Clock, Code, TestTube, Eye } from 'lucide-react';
-import { EditableText } from '../EditableText';
+import { Plus, X, Edit, Clock, Code, TestTube, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useEditMode } from '@/contexts/EditModeContext';
+import { ProjectModal } from '@/components/modals/ProjectModal';
 
 interface OngoingWork {
   id: string;
@@ -31,24 +32,33 @@ export const OngoingWorksSection: React.FC<OngoingWorksSectionProps> = ({
   onWorksChange,
   className
 }) => {
-  const addWork = () => {
-    const newWork: OngoingWork = {
-      id: Date.now().toString(),
-      title: 'New Project',
-      description: 'Project description...',
-      status: 'planning'
-    };
-    onWorksChange([...works, newWork]);
+  const { isEditMode } = useEditMode();
+  const [showModal, setShowModal] = useState(false);
+  const [editingWork, setEditingWork] = useState<OngoingWork | null>(null);
+
+  const handleAddWork = () => {
+    setEditingWork(null);
+    setShowModal(true);
+  };
+
+  const handleEditWork = (work: OngoingWork) => {
+    setEditingWork(work);
+    setShowModal(true);
+  };
+
+  const handleSaveWork = (workData: OngoingWork) => {
+    if (editingWork) {
+      onWorksChange(works.map(work => 
+        work.id === editingWork.id ? workData : work
+      ));
+    } else {
+      onWorksChange([...works, workData]);
+    }
+    setShowModal(false);
   };
 
   const removeWork = (id: string) => {
     onWorksChange(works.filter(work => work.id !== id));
-  };
-
-  const updateWork = (id: string, updates: Partial<OngoingWork>) => {
-    onWorksChange(works.map(work => 
-      work.id === id ? { ...work, ...updates } : work
-    ));
   };
 
   return (
@@ -61,13 +71,15 @@ export const OngoingWorksSection: React.FC<OngoingWorksSectionProps> = ({
               Current projects and experiments in progress
             </p>
           </div>
-          <Button
-            onClick={addWork}
-            className="bg-gradient-button hover:scale-105 smooth-transition shadow-soft"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Project
-          </Button>
+          {isEditMode && (
+            <Button
+              onClick={handleAddWork}
+              className="bg-gradient-button hover:scale-105 smooth-transition shadow-soft"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Project
+            </Button>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -80,59 +92,52 @@ export const OngoingWorksSection: React.FC<OngoingWorksSectionProps> = ({
                 <CardHeader className="relative">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <EditableText
-                        value={work.title}
-                        onChange={(title) => updateWork(work.id, { title })}
-                        as="h3"
-                        className="text-lg font-semibold"
-                      />
+                      <h3 className="text-lg font-semibold mb-2">{work.title}</h3>
                       <Badge variant="secondary" className={cn(
-                        'mt-2 text-white',
+                        'text-white',
                         statusInfo.color
                       )}>
                         <StatusIcon className="h-3 w-3 mr-1" />
                         {statusInfo.label}
                       </Badge>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeWork(work.id)}
-                      className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-destructive smooth-transition"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+                    {isEditMode && (
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 smooth-transition">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditWork(work)}
+                          className="h-8 w-8 p-0 text-primary"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeWork(work.id)}
+                          className="h-8 w-8 p-0 text-destructive"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <EditableText
-                    value={work.description}
-                    onChange={(description) => updateWork(work.id, { description })}
-                    multiline
-                    className="text-muted-foreground"
-                  />
-                  
-                  <div className="mt-4">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Status
-                    </label>
-                    <select
-                      value={work.status}
-                      onChange={(e) => updateWork(work.id, { status: e.target.value as OngoingWork['status'] })}
-                      className="w-full p-2 rounded-md bg-background border border-border smooth-transition focus:border-primary focus:ring-1 focus:ring-primary"
-                    >
-                      {Object.entries(statusConfig).map(([key, config]) => (
-                        <option key={key} value={key}>
-                          {config.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <p className="text-muted-foreground">{work.description}</p>
                 </CardContent>
               </Card>
             );
           })}
         </div>
+
+        <ProjectModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSave={handleSaveWork}
+          project={editingWork || undefined}
+          title={editingWork ? 'Edit Project' : 'Add New Project'}
+        />
       </div>
     </section>
   );
