@@ -5,36 +5,18 @@ import { Badge } from '@/components/ui/badge';
 import { useEditMode } from '@/contexts/EditModeContext';
 
 export const EditModeToggle: React.FC = () => {
-  const { isEditMode, toggleEditMode } = useEditMode();
+  const { isEditMode } = useEditMode();
+
+  // Only show the toggle when already in edit mode - hidden from regular users
+  if (!isEditMode) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
-      {isEditMode && (
-        <Badge variant="secondary" className="bg-gradient-primary text-primary-foreground animate-pulse">
-          Edit Mode Active
-        </Badge>
-      )}
-      
-      <Button
-        variant={isEditMode ? "default" : "ghost"}
-        size="sm"
-        onClick={toggleEditMode}
-        className={`rounded-full w-12 h-12 p-0 glass-card hover-lift ${
-          isEditMode 
-            ? 'bg-gradient-button shadow-strong' 
-            : 'hover:bg-muted'
-        }`}
-        title={isEditMode ? 'Exit Edit Mode' : 'Enter Edit Mode'}
-      >
-        {isEditMode ? (
-          <Unlock className="h-5 w-5" />
-        ) : (
-          <Lock className="h-5 w-5" />
-        )}
-        <span className="sr-only">
-          {isEditMode ? 'Exit Edit Mode' : 'Enter Edit Mode'}
-        </span>
-      </Button>
-    </div>
+    <Badge 
+      variant="secondary" 
+      className="fixed bottom-6 left-6 z-50 bg-gradient-primary text-primary-foreground animate-pulse glass-card"
+    >
+      <Edit className="h-4 w-4 mr-2" />
+      Edit Mode Active
+    </Badge>
   );
 };

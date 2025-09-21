@@ -2,124 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Portfolio Design System - Blue to Violet Gradient Theme */
+/* Portfolio Design System - Multi-Palette Theme System */
 
 @layer base {
   :root {
-    /* Light Mode - Blue to Violet Gradient Palette */
-    --background: 240 100% 99%;
-    --foreground: 234 25% 15%;
-
-    --card: 240 50% 98%;
-    --card-foreground: 234 25% 15%;
-
-    --popover: 240 50% 98%;
-    --popover-foreground: 234 25% 15%;
-
-    /* Primary - Sky Blue to Blue */
-    --primary: 199 89% 48%;
-    --primary-foreground: 240 100% 99%;
-
-    /* Secondary - Violet */
-    --secondary: 262 52% 47%;
-    --secondary-foreground: 240 100% 99%;
-
-    /* Muted - Light Gray Blue */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
-
-    /* Accent - Light Violet */
-    --accent: 262 73% 85%;
-    --accent-foreground: 262 52% 47%;
-
+    /* Base Layout Colors */
+    --radius: 1rem;
     --destructive: 0 84% 60%;
     --destructive-foreground: 240 100% 99%;
-
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 199 89% 48%;
-
-    --radius: 1rem;
-
-    /* Portfolio-specific Design Tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(199, 89%, 48%) 0%, hsl(262, 52%, 47%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(200, 100%, 85%) 0%, hsl(262, 73%, 85%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(240, 50%, 98%) 0%, hsl(220, 14%, 96%) 100%);
-    --gradient-button: linear-gradient(135deg, hsl(199, 89%, 48%) 0%, hsl(220, 89%, 55%) 100%);
-    
-    /* Glassmorphism */
-    --glass-bg: hsla(240, 50%, 98%, 0.8);
-    --glass-border: hsla(220, 13%, 91%, 0.3);
-    
-    /* Shadows */
-    --shadow-soft: 0 4px 20px hsla(199, 89%, 48%, 0.1);
-    --shadow-medium: 0 8px 32px hsla(199, 89%, 48%, 0.15);
-    --shadow-strong: 0 12px 48px hsla(262, 52%, 47%, 0.2);
     
     /* Animation */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Blue-Violet Palette - Light Mode */
+  :root:not([data-palette="sunset"]) {
+    --background: 240 100% 99%;
+    --foreground: 234 25% 15%;
+    --card: 240 50% 98%;
+    --card-foreground: 234 25% 15%;
+    --popover: 240 50% 98%;
+    --popover-foreground: 234 25% 15%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 240 100% 99%;
+    --secondary: 262 52% 47%;
+    --secondary-foreground: 240 100% 99%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 262 73% 85%;
+    --accent-foreground: 262 52% 47%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 199 89% 48%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(199, 89%, 48%) 0%, hsl(262, 52%, 47%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(200, 100%, 85%) 0%, hsl(262, 73%, 85%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(240, 50%, 98%) 0%, hsl(220, 14%, 96%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(199, 89%, 48%) 0%, hsl(220, 89%, 55%) 100%);
+    --glass-bg: hsla(240, 50%, 98%, 0.8);
+    --glass-border: hsla(220, 13%, 91%, 0.3);
+    --shadow-soft: 0 4px 20px hsla(199, 89%, 48%, 0.1);
+    --shadow-medium: 0 8px 32px hsla(199, 89%, 48%, 0.15);
+    --shadow-strong: 0 12px 48px hsla(262, 52%, 47%, 0.2);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  .dark {
-    /* Dark Mode - Enhanced Blue to Violet */
+  /* Sunset Palette - Light Mode */
+  :root[data-palette="sunset"] {
+    --background: 39 100% 98%;
+    --foreground: 25 25% 15%;
+    --card: 33 50% 97%;
+    --card-foreground: 25 25% 15%;
+    --popover: 33 50% 97%;
+    --popover-foreground: 25 25% 15%;
+    --primary: 16 100% 60%;
+    --primary-foreground: 39 100% 98%;
+    --secondary: 340 82% 52%;
+    --secondary-foreground: 39 100% 98%;
+    --muted: 39 14% 96%;
+    --muted-foreground: 39 9% 46%;
+    --accent: 340 73% 85%;
+    --accent-foreground: 340 82% 52%;
+    --border: 39 13% 91%;
+    --input: 39 13% 91%;
+    --ring: 16 100% 60%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(16, 100%, 60%) 0%, hsl(340, 82%, 52%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(39, 100%, 85%) 0%, hsl(340, 73%, 85%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(33, 50%, 97%) 0%, hsl(39, 14%, 96%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(16, 100%, 60%) 0%, hsl(340, 82%, 60%) 100%);
+    --glass-bg: hsla(33, 50%, 97%, 0.8);
+    --glass-border: hsla(39, 13%, 91%, 0.3);
+    --shadow-soft: 0 4px 20px hsla(16, 100%, 60%, 0.1);
+    --shadow-medium: 0 8px 32px hsla(16, 100%, 60%, 0.15);
+    --shadow-strong: 0 12px 48px hsla(340, 82%, 52%, 0.2);
+
+    --sidebar-background: 33 50% 97%;
+    --sidebar-foreground: 25 25% 15%;
+    --sidebar-primary: 16 100% 60%;
+    --sidebar-primary-foreground: 39 100% 98%;
+    --sidebar-accent: 39 14% 96%;
+    --sidebar-accent-foreground: 25 25% 15%;
+    --sidebar-border: 39 13% 91%;
+    --sidebar-ring: 16 100% 60%;
+  }
+
+  /* Blue-Violet Palette - Dark Mode */
+  .dark:not([data-palette="sunset"]) {
     --background: 234 25% 8%;
     --foreground: 240 100% 95%;
-
     --card: 234 20% 12%;
     --card-foreground: 240 100% 95%;
-
     --popover: 234 20% 12%;
     --popover-foreground: 240 100% 95%;
-
-    /* Primary - Bright Blue */
     --primary: 199 89% 65%;
     --primary-foreground: 234 25% 8%;
-
-    /* Secondary - Bright Violet */
     --secondary: 262 73% 65%;
     --secondary-foreground: 234 25% 8%;
-
     --muted: 234 15% 18%;
     --muted-foreground: 240 15% 65%;
-
     --accent: 262 50% 25%;
     --accent-foreground: 262 73% 85%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 240 100% 95%;
-
     --border: 234 15% 18%;
     --input: 234 15% 18%;
     --ring: 199 89% 65%;
-
-    /* Dark Mode Design Tokens */
+    
     --gradient-primary: linear-gradient(135deg, hsl(199, 89%, 65%) 0%, hsl(262, 73%, 65%) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(199, 60%, 25%) 0%, hsl(262, 50%, 25%) 100%);
     --gradient-card: linear-gradient(145deg, hsl(234, 20%, 12%) 0%, hsl(234, 15%, 18%) 100%);
     --gradient-button: linear-gradient(135deg, hsl(199, 89%, 65%) 0%, hsl(220, 89%, 70%) 100%);
-    
-    /* Dark Glassmorphism */
     --glass-bg: hsla(234, 20%, 12%, 0.8);
     --glass-border: hsla(234, 15%, 18%, 0.3);
-    
-    /* Dark Shadows */
     --shadow-soft: 0 4px 20px hsla(199, 89%, 65%, 0.15);
     --shadow-medium: 0 8px 32px hsla(199, 89%, 65%, 0.2);
     --shadow-strong: 0 12px 48px hsla(262, 73%, 65%, 0.25);
@@ -132,6 +134,46 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Sunset Palette - Dark Mode */
+  .dark[data-palette="sunset"] {
+    --background: 25 25% 8%;
+    --foreground: 39 100% 95%;
+    --card: 25 20% 12%;
+    --card-foreground: 39 100% 95%;
+    --popover: 25 20% 12%;
+    --popover-foreground: 39 100% 95%;
+    --primary: 16 100% 70%;
+    --primary-foreground: 25 25% 8%;
+    --secondary: 340 82% 70%;
+    --secondary-foreground: 25 25% 8%;
+    --muted: 25 15% 18%;
+    --muted-foreground: 39 15% 65%;
+    --accent: 340 50% 25%;
+    --accent-foreground: 340 73% 85%;
+    --border: 25 15% 18%;
+    --input: 25 15% 18%;
+    --ring: 16 100% 70%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(16, 100%, 70%) 0%, hsl(340, 82%, 70%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(16, 60%, 25%) 0%, hsl(340, 50%, 25%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(25, 20%, 12%) 0%, hsl(25, 15%, 18%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(16, 100%, 70%) 0%, hsl(340, 82%, 75%) 100%);
+    --glass-bg: hsla(25, 20%, 12%, 0.8);
+    --glass-border: hsla(25, 15%, 18%, 0.3);
+    --shadow-soft: 0 4px 20px hsla(16, 100%, 70%, 0.15);
+    --shadow-medium: 0 8px 32px hsla(16, 100%, 70%, 0.2);
+    --shadow-strong: 0 12px 48px hsla(340, 82%, 70%, 0.25);
+
+    --sidebar-background: 25 20% 12%;
+    --sidebar-foreground: 39 100% 95%;
+    --sidebar-primary: 16 100% 70%;
+    --sidebar-primary-foreground: 25 25% 8%;
+    --sidebar-accent: 25 15% 18%;
+    --sidebar-accent-foreground: 39 100% 95%;
+    --sidebar-border: 25 15% 18%;
+    --sidebar-ring: 16 100% 70%;
   }
 }
 
